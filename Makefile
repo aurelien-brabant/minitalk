@@ -1,5 +1,5 @@
 CC				:= clang
-CFLAGS			:= -Iinclude
+CFLAGS			:= -Iinclude -g
 LD				:= $(CC)
 LD_FLAGS		:= 
 
@@ -10,7 +10,7 @@ TARGET_CLIENT	:= client
 
 CLIENT_SRC		:= $(addprefix src/client/, main.c)
 CLIENT_OBJ		:= $(CLIENT_SRC:%.c=%.o)
-SERVER_SRC		:= $(addprefix src/server/, main.c)
+SERVER_SRC		:= $(addprefix src/server/, main.c string.c)
 SERVER_OBJ		:= $(SERVER_SRC:%.c=%.o)
 
 all: $(TARGET_SERVER) $(TARGET_CLIENT)

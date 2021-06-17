@@ -42,11 +42,13 @@ static void	send_string_to_server(int pid, const char *s)
 		i = 0;
 		while (i < CHAR_BIT)	
 		{
+			printf("Sent\n");
 			if (*s & (1 << i))
 				kill(pid, SIGUSR2);
 			else
 				kill(pid, SIGUSR1);
 			++i;
+			usleep(100);
 		}
 		++s;
 	}
