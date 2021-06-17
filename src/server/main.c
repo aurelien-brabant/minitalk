@@ -7,8 +7,14 @@
 
 t_server	server;
 
-static void	sig_epilogue(void)
+/*
+** Handler for SIGUSR1 and SIGUSR2
+*/
+
+static void	sig_handler(int sig)
 {
+	if (sig == SIGUSR2)
+		server.chr |= (1 << server.sig_count);
 	if (++server.sig_count == CHAR_BIT)
 	{
 		if (server.chr == '\0')
@@ -46,36 +52,24 @@ static void	print_pid(int pid)
 	}
 }
 
-/* 0 */
-
-void	sigusr1_handler(int sig)
+static void	sig_setup(void)
 {
-	//printf("SIGUSR1\n");
-	sig_epilogue();
-}
+	struct sigaction	act;
 
-/* 1 */
-
-void	sigusr2_handler(int sig)
-{
-	//printf("SIGUSR2\n");
-	server.chr |= (1 << server.sig_count);
-	sig_epilogue();
+	sigemptyset(&act.sa_mask);
+	act.sa_flags = 0;
+	act.sa_handler = &sig_handler;
+	sigaction(SIGUSR1, &act, NULL);
+	sigaction(SIGUSR2, &act, NULL);
 }
 
 int	main(void)
 {
-	struct sigaction	usr1_action;
-	struct sigaction	usr2_action;
-
-	sigemptyset(&usr1_action.sa_mask);
-	sigemptyset(&usr2_action.sa_mask);
-	usr1_action.sa_handler = &sigusr1_handler; 
-	usr2_action.sa_handler = &sigusr2_handler; 
-	sigaction(SIGUSR1, &usr1_action, NULL);
-	sigaction(SIGUSR2, &usr2_action, NULL);
+	sig_setup();
 	server.sig_count = 0;
-	server.string = string_new(10000);
+	server.string = string_new(2000);
+	if (server.string == NULL)
+		return (1);
 	server.chr = '\0';
 	print_pid(getpid());
 	write(1, "\n", 1);

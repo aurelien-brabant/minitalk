@@ -47,7 +47,7 @@ static void	send_string_to_server(int pid, const char *s)
 			else
 				kill(pid, SIGUSR1);
 			++i;
-			usleep(30);
+			usleep(20);
 		}
 		if (*s == '\0')
 			break ;
