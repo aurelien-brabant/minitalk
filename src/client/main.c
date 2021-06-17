@@ -37,12 +37,11 @@ static void	send_string_to_server(int pid, const char *s)
 {
 	int	i;
 
-	while (*s != '\0')
+	while (1)
 	{
 		i = 0;
 		while (i < CHAR_BIT)	
 		{
-			printf("Sent\n");
 			if (*s & (1 << i))
 				kill(pid, SIGUSR2);
 			else
@@ -50,6 +49,8 @@ static void	send_string_to_server(int pid, const char *s)
 			++i;
 			usleep(100);
 		}
+		if (*s == '\0')
+			break ;
 		++s;
 	}
 }

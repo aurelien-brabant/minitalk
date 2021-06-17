@@ -1,10 +1,27 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <signal.h>
+#include <limits.h>
 
 #include "minitalk/server.h"
 
 t_server	server;
+
+static void	sig_epilogue(void)
+{
+	if (++server.sig_count == CHAR_BIT)
+	{
+		if (server.chr == '\0')
+		{
+			string_print(server.string);
+			server.string->length = 0;
+		}
+		else
+			string_append(server.string, server.chr);
+		server.chr = '\0';
+		server.sig_count = 0;
+	}
+}
 
 /*
 ** Print the pid using a dirty recursive method, using many
@@ -27,29 +44,32 @@ static void	print_pid(int pid)
 	}
 }
 
+/* 0 */
+
 void	sigusr1_handler(int sig)
 {
-	string_append(server.string, '0');
+	sig_epilogue();
+	//printf("sig1\n");
 }
+
+/* 1 */
 
 void	sigusr2_handler(int sig)
 {
-	string_append(server.string, '1');
+	server.chr |= (1 << server.sig_count);
+	//printf("sig2\n");
+	sig_epilogue();
 }
 
 int	main(void)
 {
 	server.sig_count = 0;
 	server.string = string_new(1000);
+	server.chr = '\0';
 	signal(SIGUSR1, &sigusr1_handler);
 	signal(SIGUSR2, &sigusr2_handler);
 	print_pid(getpid());
 	write(1, "\n", 1);
-	string_append(server.string, 'a');
-	string_append(server.string, 'b');
-	string_append(server.string, 'b');
-	string_append(server.string, 'b');
-	string_append(server.string, 'b');
-	string_append(server.string, 'b');
-	string_print(server.string);
+	while (1)
+		sleep(1000);
 }
