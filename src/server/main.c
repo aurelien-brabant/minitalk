@@ -17,7 +17,9 @@ static void	sig_epilogue(void)
 			server.string->length = 0;
 		}
 		else
+		{
 			string_append(server.string, server.chr);
+		}
 		server.chr = '\0';
 		server.sig_count = 0;
 	}
@@ -48,28 +50,35 @@ static void	print_pid(int pid)
 
 void	sigusr1_handler(int sig)
 {
+	//printf("SIGUSR1\n");
 	sig_epilogue();
-	//printf("sig1\n");
 }
 
 /* 1 */
 
 void	sigusr2_handler(int sig)
 {
+	//printf("SIGUSR2\n");
 	server.chr |= (1 << server.sig_count);
-	//printf("sig2\n");
 	sig_epilogue();
 }
 
 int	main(void)
 {
+	struct sigaction	usr1_action;
+	struct sigaction	usr2_action;
+
+	sigemptyset(&usr1_action.sa_mask);
+	sigemptyset(&usr2_action.sa_mask);
+	usr1_action.sa_handler = &sigusr1_handler; 
+	usr2_action.sa_handler = &sigusr2_handler; 
+	sigaction(SIGUSR1, &usr1_action, NULL);
+	sigaction(SIGUSR2, &usr2_action, NULL);
 	server.sig_count = 0;
-	server.string = string_new(1000);
+	server.string = string_new(10000);
 	server.chr = '\0';
-	signal(SIGUSR1, &sigusr1_handler);
-	signal(SIGUSR2, &sigusr2_handler);
 	print_pid(getpid());
 	write(1, "\n", 1);
 	while (1)
-		sleep(1000);
+		pause();
 }

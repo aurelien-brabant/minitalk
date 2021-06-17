@@ -1,0 +1,41 @@
+[
+    {
+        "arguments": [
+            "clang",
+            "-c",
+            "-Iinclude",
+            "-g",
+            "-o",
+            "src/server/string.o",
+            "src/server/string.c"
+        ],
+        "directory": "/home/abrabant/Prog/42/minitalk",
+        "file": "src/server/string.c"
+    },
+    {
+        "arguments": [
+            "clang",
+            "-c",
+            "-Iinclude",
+            "-g",
+            "-o",
+            "src/server/main.o",
+            "src/server/main.c"
+        ],
+        "directory": "/home/abrabant/Prog/42/minitalk",
+        "file": "src/server/main.c"
+    },
+    {
+        "arguments": [
+            "clang",
+            "-c",
+            "-Iinclude",
+            "-g",
+            "-o",
+            "src/client/main.o",
+            "src/client/main.c"
+        ],
+        "directory": "/home/abrabant/Prog/42/minitalk",
+        "file": "src/client/main.c"
+    }
+]
